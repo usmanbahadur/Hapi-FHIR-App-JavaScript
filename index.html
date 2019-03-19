@@ -1,0 +1,126 @@
+
+<!-- Hapi FHIR API  using R4 FHIR Standard Framework
+
+PARAMETERS:
+@PATIENT_ID	 
+
+FUNCTIONS:  
+None
+FHIR RESOURCES ACCESSED:  
+API scope is Patient Read 
+Patient Demographics, Observations and Encounter
+
+CREATED: 2018-2019
+BY:		Usman Bahadur
+
+VERSION:	1.0
+------------------------------------------------------------------------------------------------------------------------
+MODIFIED: 16-FEB-2018
+BY:	 UB
+REASON: Minor updates to meet the FHIR R4 version. 
+		 
+VERSION:	 1.1
+---------------------------------------------------------------------------------------------------------------------->
+<!DOCTYPE html>
+<html>
+
+<head>
+<style>
+
+</style>
+<link rel="stylesheet" href="css/main.css" />
+<script type="text/javascript" src="DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css"></script>
+
+  <script  src="jquery.min.js"></script>
+  <script  src="jqFhir.js"></script>
+  <!--link rel="stylesheet" href="style.css" /-->
+  <!--script src="script.js"></script-->
+  <title>Sample FHIR App</title>
+</head>
+
+<body> 
+  <table > <thead><Label> FHIR App (A Hapi FHIR Resource Server )</Label></thead><tbody>
+  <tr> <th> Patient Name:</th><td id="name"></td></tr>
+  <tr><th> Gender:</th><td id="gender"></td></tr>
+  <tr><th> Date of Birth:</th><td id="birthDate"></td></tr>
+     
+  <tr><th> Contact Details:</th><td><span id="use"> </span> 
+                        <span id="telecom"> </span> 
+                        <span id="system"></span> 
+                        <span id="use3"></span> 
+                        <span id="use2"></span> 
+                        </td></tr>
+<tr><th> Address:</th><td><span id="use0"></span> 
+                    <span id="use1"></span> 
+                   <span id="use4"></span> 
+                   <span id="use5"></span> 
+                   <span id="use6"></span> 
+                </td></tr>
+ 
+ <tr> <th> Last Updated:</th><td id="lastUpdated"></td></tr>
+  </tbody>
+   </table>
+ 
+  <script>
+  
+    // Set up a client and patient ID to talk to an un-authenticated FHIR server
+    var client = jqFhir({ baseUrl: 'https://hapi.fhir.org//baseR4' }),
+        patientId = '6409';
+        //http://hapi.fhir.org/baseR4/Observation/6547
+       //http://hapi.fhir.org/baseR4/Encounter/6516
+       
+    client.read({
+      id: 'Patient/' + patientId
+    }).then(function(p) {
+      var name = p.content.name[0];
+      var formatted = name.prefix + " " + name.given + " " + name.family;
+     $("#name").text(formatted);
+  
+      var gender = p.content.gender;
+      var formatted = gender;
+      $("#gender").text(formatted);
+
+      var birthdate = p.content.birthDate;
+      var formatted = birthdate;
+      $("#birthDate").text(formatted);
+
+      var meta = p.content.meta;
+      var formatted = meta.lastUpdated.replace (/T/, "    " ).replace (/[+]/g, "").replace(/00:00/g,"" );
+      $("#lastUpdated").text(formatted);    
+
+      var telecom = p.content.telecom[0];
+      var formatted = telecom.system;
+       $("#telecom").text(formatted);
+
+      var telecom = p.content.telecom[0];    
+      var formatted = telecom.value;
+      $("#system").text(formatted);
+
+      var telecom = p.content.telecom[0];    
+      var formatted = telecom.use;
+      $("#use").text(formatted);
+
+      var address = p.content.address[0];    
+      var formatted =  address.line;
+      $("#use0").text(formatted);
+      var address = p.content.address[0]; 
+      var formatted ="City: "+ address.city;
+      $("#use1").text(formatted);
+
+      var address = p.content.address[0];    
+      var formatted = "Postal Code: "+ address.postalCode ;
+      $("#use6").text(formatted);
+
+
+    });
+    if (client == undefined)
+   {
+
+    "Patient Not Found" 
+   }
+  </script>
+ 
+
+</body>
+</html>
